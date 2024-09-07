@@ -16,7 +16,10 @@ Extrae la información de los servidores en un archivo de texto único para su f
 
 ## Uso
 
-TBD
+```shell
+transcribe windows IP Etapa Outfile
+transcribe linux IP Etapa Outfile
+```
 
 ## Roadmap
 
@@ -24,12 +27,12 @@ TBD
 
 - [ ] Recibe `IP`, `Tipo` y `Etapa`
 - [ ] Recibe un csv con 2 columnas `IP`, `Tipo` y `Etapa`
-  
+
   | IP           | Tipo    | Etapa |
   |--------------|---------|-------|
   | 10.30.1.124  | Windows | 1     |
   | 10.20.100.25 | Linux   | Full  |
-  
+
   ```text
   IP,Tipo,Etapa
   10.30.1.124,Windows,1

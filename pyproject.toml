@@ -6,6 +6,9 @@ authors = ["Carlos Farid Nogales López <nem.farid@coppel.com>"]
 license = "MIT"
 readme = "README.md"
 
+[tool.poetry.scripts]
+transcribe = "transcribe.main:app"
+
 [tool.poetry.dependencies]
 python = "^3.12"
 typer = "^0.12.5"
