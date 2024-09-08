@@ -10,9 +10,6 @@ app = typer.Typer()
 err_console = Console(stderr=True)
 
 
-# TODO: Create outfile
-# TODO: Append systeminfo file processed to outfile
-# TODO: Append discos file processed to outfile
 # TODO: Append puertos file processed to outfile
 # TODO: Append programas file processed to outfile
 # TODO: Add 'Etapa' argument to command
@@ -27,6 +24,17 @@ def windows(ip_dir: Annotated[str, typer.Argument()]):
     if not utils.convert_files_to_utf8(full_path):
         err_console.print("Something went wrong when converting files to UTF-8.")
         raise typer.Exit(code=1)
+
+    ip = os.path.basename(full_path)
+
+    content = utils.get_summary(
+        os.path.join(full_path, f"systeminfo_{ip}.txt"),
+        os.path.join(full_path, f"discos_{ip}.txt"),
+        ip,
+    )
+
+    with open(os.path.join(full_path, f'{ip}.txt'), "w") as file:
+        file.write(content)
 
 
 # TODO: Everything

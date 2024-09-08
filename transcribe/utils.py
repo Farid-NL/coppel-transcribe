@@ -1,4 +1,5 @@
 import os
+import re
 
 
 def convert_files_to_utf8(directory_path: str) -> bool:
@@ -25,3 +26,50 @@ def convert_files_to_utf8(directory_path: str) -> bool:
             return False
 
     return True
+
+
+def get_summary(info_path: str, disk_path: str, ip: str) -> str:
+    """
+    Return the server's information for the summary tab of the Gsheet
+    :param info_path: Path of `systeminfo_X.X.X.X.txt`
+    :param disk_path: Path of `discos_X.X.X.X.txt`
+    :param ip: IP address of the server
+    :return: Summary to be appended to the output file
+    """
+
+    def clean_line(data: list[str], row: int, regex: str = r"[\w\d_ ()]+:\s+"):
+        """
+        Remove regex match from given read lines
+        :param data: Read lines
+        :param row: Specific line number (0 index)
+        :param regex: Regular expression to match
+        :return: Cleaned line
+        """
+        return re.sub(regex, "", data[row].strip())
+
+    with open(info_path, "r") as file:
+        info = file.readlines()
+
+    info_host = clean_line(info, 1)
+    info_os = clean_line(info, 2) + " " + clean_line(info, 3)
+    num_cpu = re.search(r"\d+", info[15].strip()).group(0)
+    info_cpu = clean_line(info, 16, r"\[\d+]: ") + " x" + num_cpu
+    info_ram = clean_line(info, 15 + int(num_cpu) + 8)
+
+    with open(disk_path, "r+") as file:
+        info_disk = file.read().strip()
+
+    return f"""\
+┌───────┐
+│Resumen│
+└───────┘
+─ Servidor ─
+{info_host}
+{ip}
+
+{info_os}
+
+─ Características ─
+{info_ram}
+{info_cpu}
+{info_disk}"""
