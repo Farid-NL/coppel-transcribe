@@ -5,9 +5,9 @@ from shutil import rmtree
 from typing import List
 
 import typer
-from typing_extensions import Annotated
 from rich import print
 from rich.console import Console
+from typing_extensions import Annotated
 
 from transcribe import win_utils
 
@@ -20,7 +20,7 @@ err_console = Console(stderr=True)
 
 # TODO: Add 'Etapa' argument to command
 @app.command()
-def windows(ip_zip: Annotated[Path, typer.Argument()]):
+def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
 
     # Validation: Check if it's a zip file
@@ -82,7 +82,7 @@ def windows(ip_zip: Annotated[Path, typer.Argument()]):
 
 @multiple_app.command("windows")
 def multiple_windows(
-    base_dir: Annotated[Path, typer.Argument()],
+    base_dir: Annotated[str, typer.Argument()],
     ips: Annotated[List[str], typer.Argument()],
 ):
     full_path = os.path.abspath(base_dir)
