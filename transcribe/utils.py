@@ -112,3 +112,44 @@ def get_ports(ports_path: str):
 └───────┘
 {ports}
 """
+
+
+def get_programs(programs_path: str):
+    parent_dir = Path(programs_path).parent
+    file_name = Path(programs_path).stem
+
+    # Tmp file
+    tmp_csv_path = os.path.join(parent_dir, f"{file_name}.csv")
+
+    # Create a tmp csv file
+    pandas.read_fwf(programs_path).to_csv(tmp_csv_path, index=False)
+    csv_data = pandas.read_csv(
+        tmp_csv_path, usecols=["Name", "Version", "ProviderName"]
+    )
+
+    # Drop the first row: ----,-------,------------
+    csv_data.drop(index=0, inplace=True)
+
+    # Get the first occurrence of ProviderName with a value of 'msu'
+    # Store its index one row above and only stores values until that index
+    rm_index = csv_data[csv_data.ProviderName == "msu"].index[0] - 1
+    csv_data = csv_data[:rm_index]
+
+    # Create a string with all the programs data
+    align_text_left = lambda text: f"{text:<30}"
+    programs = csv_data[["Name", "Version"]].to_string(
+        header=False,
+        index=False,
+        na_rep="",
+        formatters={"Name": align_text_left},
+    )
+
+    # Clean tmp files
+    os.remove(tmp_csv_path)
+
+    return f"""
+┌─────────┐
+│Programas│
+└─────────┘
+{programs}
+"""

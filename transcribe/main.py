@@ -34,6 +34,8 @@ def windows(ip_dir: Annotated[str, typer.Argument()]):
 
     content += utils.get_ports(os.path.join(full_path, f"puertos_{ip}.txt"),)
 
+    content += utils.get_programs(os.path.join(full_path, f"programas_instalados__{ip}.txt"), )
+
     with open(os.path.join(full_path, f'{ip}.txt'), "w") as file:
         file.write(content)
 
