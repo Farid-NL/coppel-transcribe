@@ -1,5 +1,7 @@
 import os
 import re
+from pathlib import Path
+import pandas
 
 
 def convert_files_to_utf8(directory_path: str) -> bool:
@@ -72,4 +74,41 @@ def get_summary(info_path: str, disk_path: str, ip: str) -> str:
 ─ Características ─
 {info_ram}
 {info_cpu}
-{info_disk}"""
+{info_disk}
+"""
+
+
+def get_ports(ports_path: str):
+    parent_dir = Path(ports_path).parent
+    file_name = Path(ports_path).stem
+
+    # Tmp files
+    tmp_txt_path = os.path.join(parent_dir, f"{file_name}.tmp")
+    tmp_csv_path = os.path.join(parent_dir, f"{file_name}.csv")
+
+    # Remove the 3 first lines of the original file and stores the rest in a tmp file
+    with open(ports_path, "r") as ports_file, open(tmp_txt_path, "w") as tmp_txt_file:
+        ports_data = ports_file.readlines()
+        tmp_txt_file.writelines(ports_data[3:])
+
+    # Create a tmp csv file
+    pandas.read_fwf(tmp_txt_path).to_csv(tmp_csv_path, index=False)
+    csv_data = pandas.read_csv(tmp_csv_path, usecols=["Local Address"])
+
+    # Store just the port numbers and remove duplicates
+    csv_data.replace(r".+:", "", regex=True, inplace=True)
+    csv_data.drop_duplicates(inplace=True)
+
+    # Create a string with all the ports data
+    ports = "\n".join(csv_data["Local Address"])
+
+    # Clean tmp files
+    os.remove(tmp_txt_path)
+    os.remove(tmp_csv_path)
+
+    return f"""
+┌───────┐
+│Puertos│
+└───────┘
+{ports}
+"""

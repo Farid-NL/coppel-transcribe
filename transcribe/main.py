@@ -10,7 +10,6 @@ app = typer.Typer()
 err_console = Console(stderr=True)
 
 
-# TODO: Append puertos file processed to outfile
 # TODO: Append programas file processed to outfile
 # TODO: Add 'Etapa' argument to command
 @app.command()
@@ -32,6 +31,8 @@ def windows(ip_dir: Annotated[str, typer.Argument()]):
         os.path.join(full_path, f"discos_{ip}.txt"),
         ip,
     )
+
+    content += utils.get_ports(os.path.join(full_path, f"puertos_{ip}.txt"),)
 
     with open(os.path.join(full_path, f'{ip}.txt'), "w") as file:
         file.write(content)
