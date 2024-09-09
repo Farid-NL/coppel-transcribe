@@ -71,6 +71,7 @@ def get_summary(info_path: str, disk_path: str, ip: str) -> str:
 
 {info_os}
 
+
 ─ Características ─
 {info_ram}
 {info_cpu}

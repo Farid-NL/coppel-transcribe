@@ -9,7 +9,7 @@ from typing_extensions import Annotated
 from rich import print
 from rich.console import Console
 
-from transcribe import utils
+from transcribe import win_utils
 
 app = typer.Typer()
 multiple_app = typer.Typer()
@@ -44,7 +44,7 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
         zip_ref.extractall(target_dir)
 
     # Convert UTF-16 files to UTF-18
-    if not utils.convert_files_to_utf8(target_dir):
+    if not win_utils.convert_files_to_utf8(target_dir):
         err_console.print("Something went wrong when converting files to UTF-8.")
         raise typer.Exit(code=1)
 
@@ -64,9 +64,9 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
 
     output_file = os.path.join(target_dir, f"{ip}.txt")
 
-    content = utils.get_summary(systeminfo_txt, discos_txt, ip)
-    content += utils.get_ports(puertos_txt)
-    content += utils.get_programs(programas_txt)
+    content = win_utils.get_summary(systeminfo_txt, discos_txt, ip)
+    content += win_utils.get_ports(puertos_txt)
+    content += win_utils.get_programs(programas_txt)
 
     with open(output_file, "w") as file:
         file.write(content)
