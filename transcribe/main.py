@@ -30,17 +30,25 @@ def windows(
 
     ip = os.path.basename(full_path)
 
+    # Files to be processed
+    systeminfo_txt = os.path.join(full_path, f"systeminfo_{ip}.txt")
+    discos_txt = os.path.join(full_path, f"discos_{ip}.txt")
+    puertos_txt = os.path.join(full_path, f"puertos_{ip}.txt")
+    programas_txt = os.path.join(full_path, f"programas_instalados__{ip}.txt")
+
     content = utils.get_summary(
-        os.path.join(full_path, f"systeminfo_{ip}.txt"),
-        os.path.join(full_path, f"discos_{ip}.txt"),
+        systeminfo_txt,
+        discos_txt,
         ip,
     )
 
-    content += utils.get_ports(os.path.join(full_path, f"puertos_{ip}.txt"),)
+    content += utils.get_ports(
+        puertos_txt,
+    )
 
-    content += utils.get_programs(os.path.join(full_path, f"programas_instalados__{ip}.txt"), )
+    content += utils.get_programs(programas_txt)
 
-    with open(os.path.join(full_path, f'{ip}.txt'), "w") as file:
+    with open(os.path.join(full_path, f"{ip}.txt"), "w") as file:
         file.write(content)
 
 
