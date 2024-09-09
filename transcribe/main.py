@@ -13,16 +13,20 @@ err_console = Console(stderr=True)
 # TODO: Append programas file processed to outfile
 # TODO: Add 'Etapa' argument to command
 @app.command()
-def windows(ip_dir: Annotated[str, typer.Argument()]):
-    full_path = os.path.abspath(ip_dir)
+def windows(
+    ip_directory: Annotated[str, typer.Argument()],
+    convert: Annotated[bool, typer.Option()] = True,
+):
+    full_path = os.path.abspath(ip_directory)
 
     if not os.path.isdir(full_path):
         err_console.print("The chosen path is not a directory.")
         raise typer.Exit(code=1)
 
-    if not utils.convert_files_to_utf8(full_path):
-        err_console.print("Something went wrong when converting files to UTF-8.")
-        raise typer.Exit(code=1)
+    if convert:
+        if not utils.convert_files_to_utf8(full_path):
+            err_console.print("Something went wrong when converting files to UTF-8.")
+            raise typer.Exit(code=1)
 
     ip = os.path.basename(full_path)
 
