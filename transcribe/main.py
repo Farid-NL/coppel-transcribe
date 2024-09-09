@@ -1,9 +1,10 @@
 import os
 import zipfile
 from pathlib import Path
+from shutil import rmtree
 
 import typer
-from typing import Optional, List
+from typing import List
 from typing_extensions import Annotated
 from rich.console import Console
 from transcribe import utils
@@ -65,9 +66,9 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
 
 
 # TODO: Everything
-@app.command()
-def linux(ip_dir: Annotated[str, typer.Argument()]):
-    pass
+# @app.command()
+# def linux(ip_dir: Annotated[str, typer.Argument()]):
+#     pass
 
 
 @multiple_app.command("windows")
