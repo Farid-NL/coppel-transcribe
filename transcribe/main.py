@@ -1,11 +1,14 @@
 import os
 import zipfile
 from pathlib import Path
+from shutil import rmtree
+from typing import List
 
 import typer
-from typing import List
 from typing_extensions import Annotated
+from rich import print
 from rich.console import Console
+
 from transcribe import utils
 
 app = typer.Typer()
@@ -49,8 +52,8 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     files = os.listdir(target_dir)
     for file in files:
         if not ip in file:
-            err_console.print(f"The file '{file}' does not match the IP '{ip}'.")
-            err_console.print(f"Avoid using files from '{ip}'!")
+            err_console.print(f":cross_mark: [bold red]{ip}[/bold red] : The file '{file}' does not match the IP.")
+            rmtree(target_dir)
             return
 
     # Files to be processed
@@ -67,6 +70,8 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
 
     with open(output_file, "w") as file:
         file.write(content)
+
+    print(f":white_check_mark: [bold green]{ip}[/bold green]")
 
 
 # TODO: Everything
