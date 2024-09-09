@@ -1,13 +1,17 @@
 import os
 import zipfile
+from pathlib import Path
 
 import typer
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import Annotated
 from rich.console import Console
 from transcribe import utils
 
 app = typer.Typer()
+multiple_app = typer.Typer()
+app.add_typer(multiple_app, name="multiple")
+
 err_console = Console(stderr=True)
 
 
@@ -17,8 +21,13 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
 
     if not full_path.endswith(".zip"):
-        err_console.print("The chosen path is not a zip file.")
+        err_console.print("The file is not a zip file.")
         raise typer.Exit(code=1)
+
+    if not os.path.exists(full_path):
+        err_console.print(f"The file '{full_path}' does not exist.")
+        err_console.print("File skipped")
+        return
 
     parent_dir = os.path.dirname(full_path)
     ip = os.path.splitext(os.path.basename(full_path))[0]
@@ -59,6 +68,21 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
 @app.command()
 def linux(ip_dir: Annotated[str, typer.Argument()]):
     pass
+
+
+@multiple_app.command("windows")
+def multiple_windows(
+    base_dir: Annotated[Path, typer.Argument()],
+    ips: Annotated[List[str], typer.Argument()],
+):
+    full_path = os.path.abspath(base_dir)
+
+    if not os.path.isdir(full_path):
+        err_console.print("The chosen path is not a directory")
+        raise typer.Exit(code=1)
+
+    for ip in ips:
+        windows(os.path.join(full_path, f"{ip}.zip"))
 
 
 if __name__ == "__main__":
