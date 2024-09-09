@@ -1,7 +1,6 @@
 import os
 import zipfile
 from pathlib import Path
-from shutil import rmtree
 
 import typer
 from typing import List
@@ -21,22 +20,27 @@ err_console = Console(stderr=True)
 def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
 
+    # Validation: Check if it's a zip file
     if not full_path.endswith(".zip"):
         err_console.print("The file is not a zip file.")
         raise typer.Exit(code=1)
 
+    # Validation: Check if the zip file exists
     if not os.path.exists(full_path):
         err_console.print(f"The file '{full_path}' does not exist.")
         err_console.print("File skipped")
         return
 
-    parent_dir = os.path.dirname(full_path)
     ip = os.path.splitext(os.path.basename(full_path))[0]
-    target_dir = os.path.join(parent_dir, ip)
 
+    # Directory path where the zip file is going to be extracted
+    target_dir = os.path.join(os.path.dirname(full_path), ip)
+
+    # Zip extraction
     with zipfile.ZipFile(full_path, "r") as zip_ref:
         zip_ref.extractall(target_dir)
 
+    # Convert UTF-16 files to UTF-18
     if not utils.convert_files_to_utf8(target_dir):
         err_console.print("Something went wrong when converting files to UTF-8.")
         raise typer.Exit(code=1)
@@ -49,16 +53,8 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
 
     output_file = os.path.join(target_dir, f"{ip}.txt")
 
-    content = utils.get_summary(
-        systeminfo_txt,
-        discos_txt,
-        ip,
-    )
-
-    content += utils.get_ports(
-        puertos_txt,
-    )
-
+    content = utils.get_summary(systeminfo_txt, discos_txt, ip)
+    content += utils.get_ports(puertos_txt)
     content += utils.get_programs(programas_txt)
 
     with open(output_file, "w") as file:
