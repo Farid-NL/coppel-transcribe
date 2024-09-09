@@ -45,6 +45,14 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
         err_console.print("Something went wrong when converting files to UTF-8.")
         raise typer.Exit(code=1)
 
+    # Validation: Check if extracted files match the IP
+    files = os.listdir(target_dir)
+    for file in files:
+        if not ip in file:
+            err_console.print(f"The file '{file}' does not match the IP '{ip}'.")
+            err_console.print(f"Avoid using files from '{ip}'!")
+            return
+
     # Files to be processed
     systeminfo_txt = os.path.join(target_dir, f"systeminfo_{ip}.txt")
     discos_txt = os.path.join(target_dir, f"discos_{ip}.txt")
