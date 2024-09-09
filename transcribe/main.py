@@ -20,7 +20,7 @@ err_console = Console(stderr=True)
 
 # TODO: Add 'Etapa' argument to command
 @app.command()
-def windows(ip_zip: Annotated[str, typer.Argument()]):
+def windows(ip_zip: Annotated[Path, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
 
     # Validation: Check if it's a zip file
@@ -52,7 +52,7 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     files = os.listdir(target_dir)
     for file in files:
         if not ip in file:
-            err_console.print(f":cross_mark: [bold red]{ip}[/bold red] : The file '{file}' does not match the IP.")
+            err_console.print(f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file '{file}' does not match the IP)[/italic]")
             rmtree(target_dir)
             return
 
