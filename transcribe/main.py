@@ -53,7 +53,9 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     files = os.listdir(target_dir)
     for file in files:
         if not ip in file:
-            err_console.print(f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file '{file}' does not match the IP)[/italic]")
+            err_console.print(
+                f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file '{file}' does not match the IP)[/italic]"
+            )
             rmtree(target_dir)
             return
 
