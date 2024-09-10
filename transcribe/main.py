@@ -1,4 +1,5 @@
 import os
+import re
 import zipfile
 from pathlib import Path
 from shutil import rmtree
@@ -9,7 +10,7 @@ from rich import print
 from rich.console import Console
 from typing_extensions import Annotated
 
-from transcribe import win_utils
+from transcribe import lnx_utils, win_utils
 
 app = typer.Typer()
 multiple_app = typer.Typer()
@@ -74,10 +75,42 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     print(f":white_check_mark: [bold green]{ip}[/bold green]")
 
 
-# TODO: Everything
-# @app.command()
-# def linux(ip_dir: Annotated[str, typer.Argument()]):
-#     pass
+# TODO: Check other formats and its variants
+@app.command()
+def linux(ip_file: Annotated[str, typer.Argument()]):
+    full_path = os.path.abspath(ip_file)
+    parent_dir = os.path.dirname(full_path)
+
+    ip = os.path.splitext(os.path.basename(full_path))[0]
+
+    # Validation: Check if file exists
+    if not os.path.exists(full_path):
+        err_console.print(
+            f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file does not exists)[/italic]"
+        )
+        return
+
+    # Validation: Check if file has format 1 (README.md)
+    regex_format_1 = r"ok: \[\d+\.\d+\.\d+\.\d+]"  # r"ok: \[\d+\.\d+\.\d+\.\d+] => {"
+    with open(full_path, "r") as file:
+        first_line = file.readline()
+    if not re.search(regex_format_1, first_line):
+        err_console.print(
+            f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file does not match [bold default]format 1[/bold default]"
+        )
+        return
+
+    # Create output directory
+    output_dir = os.path.join(parent_dir, ip)
+    Path(output_dir).mkdir(0o775, True, True)
+    output_file = os.path.join(output_dir, f"{ip}.txt")
+
+    # Write content to output file
+    content = lnx_utils.get_info_format_1(full_path, ip)
+    with open(output_file, "w") as file:
+        file.write(content)
+
+    print(f":white_check_mark: [bold green]{ip}[/bold green]")
 
 
 @multiple_app.command("windows")
