@@ -52,7 +52,7 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     # Validation: Check if extracted files match the IP
     files = os.listdir(target_dir)
     for file in files:
-        if not ip in file:
+        if ip not in file:
             err_console.print(
                 f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file '{file}' does not match the IP)[/italic]"
             )

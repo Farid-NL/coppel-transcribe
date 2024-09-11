@@ -30,7 +30,7 @@ def get_info_format_1(file: str, ip: str) -> str:
         # Summary
         if "DNS" in data[i]:
             dns_list = ""
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 dns = re.search(r"\d+\.\d+\.\d+\.\d+", data[i])
                 if dns:
                     dns_list += f"{dns.group()}\n"
@@ -63,7 +63,7 @@ def get_info_format_1(file: str, ip: str) -> str:
                 software["MySQL"] = software_ver.group()
 
         if "Version de Java" in data[i]:
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 software_ver = re.search(r"(?:\d+\.)+\d+_?\d+", data[i])
                 if software_ver:
                     software["Java"] = software_ver.group()
@@ -81,7 +81,7 @@ def get_info_format_1(file: str, ip: str) -> str:
                 software["Tomcat"] = software_ver.group()
 
         if "Version de XINETD" in data[i]:
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 software_ver = re.search(r"(?:\d+\.)+\d+", data[i + 1])
                 if software_ver:
                     software["xinetd"] = software_ver.group()
@@ -95,7 +95,7 @@ def get_info_format_1(file: str, ip: str) -> str:
 
         if "Version de python" in data[i]:
             python_ver = ""
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 software_ver = re.search(r"\d+(?:\.\d+\w?)?", data[i])
                 if software_ver:
                     python_ver += f"{software_ver.group()}\n"
@@ -124,7 +124,7 @@ def get_info_format_1(file: str, ip: str) -> str:
                 software["PHP"] = software_ver.group()
 
         if "Version Postgres" in data[i]:
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 software_ver = re.search(r"(?:\d+\.)+\d+", data[i + 1])
                 if software_ver:
                     software["PostgreSQL"] = software_ver.group()
@@ -137,7 +137,7 @@ def get_info_format_1(file: str, ip: str) -> str:
                 software["Redis"] = software_ver.group()
 
         if "Version Docker" in data[i]:
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 software_ver = re.search(r"(?:\d+\.)+\d+", data[i + 1])
                 if software_ver:
                     software["Docker"] = software_ver.group()
@@ -147,7 +147,7 @@ def get_info_format_1(file: str, ip: str) -> str:
         # Puertos
         if "Resumen puertos" in data[i]:
             ports = ""
-            while not "___" in data[i]:
+            while "___" not in data[i]:
                 port = re.search(r"\d+ \w+(?:-?\w+)*", data[i])
                 if port:
                     ports += f"{port.group()}\n"

@@ -138,7 +138,7 @@ def get_programs(programs_path: str):
     csv_data = csv_data[:rm_index]
 
     # Create a string with all the programs data
-    align_text_left = lambda text: f"{text:<30}"
+    def align_text_left(text): return f"{text:<30}"
     programs = csv_data[["Name", "Version"]].to_string(
         header=False,
         index=False,
