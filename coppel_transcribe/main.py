@@ -10,7 +10,7 @@ from rich import print
 from rich.console import Console
 from typing_extensions import Annotated
 
-from transcribe import lnx_utils, win_utils
+from coppel_transcribe import lnx_utils, win_utils
 
 app = typer.Typer()
 multiple_app = typer.Typer()

@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "transcribe"
+name = "coppel-transcribe"
 version = "0.1.0"
-description = "Transcribe server info into a single txt file or a Google Sheet"
+description = "Extrae la información de los servidores de manera condensada para un copy-paste más rápido"
 authors = ["Carlos Farid Nogales López <nem.farid@coppel.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.scripts]
-transcribe = "transcribe.main:app"
+coppel-transcribe = "coppel_transcribe.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.12"
