@@ -29,11 +29,13 @@ def get_info_format_1(file: str, ip: str) -> str:
     for i in range(len(data)):
         # Summary
         if "DNS" in data[i]:
-            dns = ""
-            while re.search(r"\d+\.\d+\.\d+\.\d+", data[i]):
-                dns += f"{clean_line(data[i])}\n"
+            dns_list = ""
+            while not "___" in data[i]:
+                dns = re.search(r"\d+\.\d+\.\d+\.\d+", data[i])
+                if dns:
+                    dns_list += f"{dns.group()}\n"
                 i += 1
-            info["dns"] = dns
+            info["dns"] = dns_list
 
         if "hostname" in data[i]:
             info["host"] = clean_line(data[i + 1])
