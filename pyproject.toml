@@ -15,12 +15,7 @@ typer = "^0.12.5"
 pandas = "^2.2.2"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.2"
-black = "^24.8.0"
-isort = "^5.13.2"
-
-[tool.isort]
-profile = "black"
+ruff = "^0.6.4"
 
 [build-system]
 requires = ["poetry-core"]
