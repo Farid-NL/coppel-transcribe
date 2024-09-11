@@ -130,5 +130,20 @@ def multiple_windows(
         windows(os.path.join(full_path, f"{ip}.zip"))
 
 
+@multiple_app.command("linux")
+def multiple_linux(
+    base_dir: Annotated[str, typer.Argument()],
+    ips: Annotated[List[str], typer.Argument()],
+):
+    full_path = os.path.abspath(base_dir)
+
+    if not os.path.isdir(full_path):
+        err_console.print("The chosen path is not a directory")
+        raise typer.Exit(code=1)
+
+    for ip in ips:
+        linux(os.path.join(full_path, f"{ip}.txt"))
+
+
 if __name__ == "__main__":
     app()
