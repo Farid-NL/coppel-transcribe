@@ -165,7 +165,8 @@ def get_info_format_1(file: str, ip: str) -> str:
             while "___" not in data[i]:
                 port = re.search(r"\d+ \w+(?:-?\w+)*", data[i])
                 if port:
-                    ports += f"{port.group()}\n"
+                    port = port.group().replace(" ", ",")
+                    ports += f"{port}\n"
                 i += 1
             info["ports"] = ports.strip()
             last_i = i
