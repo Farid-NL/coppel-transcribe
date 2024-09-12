@@ -54,7 +54,7 @@ def windows(ip_zip: Annotated[str, typer.Argument()]):
     for file in files:
         if ip not in file:
             err_console.print(
-                f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file '{file}' does not match the IP)[/italic]"
+                f":cross_mark: [bold red]{ip:<13}[/bold red] [italic](The file '{file}' does not match the IP)[/italic]"
             )
             rmtree(target_dir)
             return
@@ -98,7 +98,7 @@ def linux(ip_file: Annotated[str, typer.Argument()]):
         first_line = file.readline()
     if not re.search(regex_format_1, first_line):
         err_console.print(
-            f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file does not match [bold default]format 1[/bold default]"
+            f":cross_mark: [bold red]{ip:<13}[/bold red] [italic](The file does not match [bold default]format 1[/bold default])"
         )
         return
 
