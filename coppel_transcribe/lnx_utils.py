@@ -113,10 +113,10 @@ def get_info_format_1(file: str, ip: str) -> str:
             while "___" not in data[i]:
                 software_ver = re.search(r"\d+(?:\.\d+\w?)?", data[i])
                 if software_ver:
-                    python_ver += f"{software_ver.group()}\n"
+                    python_ver += f"{software_ver.group()}, "
                 i += 1
             if python_ver:
-                software["Python"] = f"(\n{python_ver})"
+                software["Python"] = f"{python_ver.strip(", ")}"
 
         if "Version de nginx" in data[i]:
             software_ver = re.search(r"(?:\d+\.)+\d+", data[i + 1])
@@ -171,6 +171,12 @@ def get_info_format_1(file: str, ip: str) -> str:
             info["ports"] = ports.strip()
             last_i = i
 
+    # Programs and its versions separated by commas
+    all_software = ""
+    for key, value in software.items():
+        all_software += f"{key};{value}\n"
+    all_software = all_software.strip()
+
     # The rest
     for line in data[last_i:]:
         last_lines += line
@@ -193,8 +199,7 @@ def get_info_format_1(file: str, ip: str) -> str:
 {info["disk"]}
 
 ─ Versiones de programas ({len(software)}) ─
-{"\n".join(software.keys())}
-{"\n".join(software.values())}
+{all_software}
 
 ┌───────┐
 │Puertos│
