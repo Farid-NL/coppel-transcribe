@@ -12,6 +12,7 @@ def get_info_format_1(file: str, ip: str) -> str:
             "host",
             "ip",
             "os",
+            "tipo",
             "ram",
             "cpu",
             "disk",
@@ -45,6 +46,12 @@ def get_info_format_1(file: str, ip: str) -> str:
 
         if "operativo" in data[i]:
             info["os"] = clean_line(data[i + 1])
+
+        if "Base de Datos SI/NO" in data[i]:
+            if "SI" in data[i + 1]:
+                info["tipo"] = "Base de datos"
+            elif "NO" in data[i + 1]:
+                info["tipo"] = "Aplicativo"
 
         if "RAM" in data[i]:
             info["ram"] = re.search(r"\d+ kB", data[i + 1]).group()
@@ -169,7 +176,7 @@ def get_info_format_1(file: str, ip: str) -> str:
 {info["ip"]}
 
 {info["os"]}
-
+{info["tipo"]}
 
 ─ Características ─
 {info["ram"]}
