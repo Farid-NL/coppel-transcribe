@@ -23,7 +23,7 @@ def get_info_format_1(file: str, ip: str) -> str:
     software = dict()
 
     def clean_line(row: str) -> str:
-        return row.strip().replace(",", "")
+        return row.strip().replace(",", "").replace('"', "")
 
     last_i = 0
     last_lines = ""
