@@ -60,9 +60,17 @@ def get_info_format_1(file: str, ip: str) -> str:
             info["cpu"] = f"x{clean_line(data[i + 1])}"
 
         if "DISCOS" in data[i]:
-            info["disk"] = (
-                f"/      {clean_line(data[i + 2])}\n/sysx  {clean_line(data[i + 8])}"
-            )
+            sizes = ""
+            while "___" not in data[i]:
+                size = re.search(r"\d+(?:\.\d+)?[G|T]", data[i])
+                if size and (
+                    "disco root" in data[i - 1] or "disco root" in data[i - 2]
+                ):
+                    sizes += f"/      {size.group()}\n"
+                elif size and "(sysx)" in data[i - 3]:
+                    sizes += f"/sysx  {size.group()}"
+                i += 1
+            info["disk"] = sizes
 
         if "SQL SERVER" in data[i]:
             software_ver = re.search(r"(?:\d+\.)+\d+ Distrib .+-MariaDB", data[i + 1])
