@@ -10,7 +10,7 @@ from rich import print
 from rich.console import Console
 from typing_extensions import Annotated
 
-from coppel_transcribe import lnx_utils, win_utils
+from coppel_transcribe import lnx_utils, utils, win_utils
 
 app = typer.Typer()
 multiple_app = typer.Typer()
@@ -109,6 +109,30 @@ def linux(ip_file: Annotated[str, typer.Argument()]):
 
     # Write content to output file
     content = lnx_utils.get_info_format_1(full_path, ip)
+    with open(output_file, "w") as file:
+        file.write(content)
+
+    print(f":white_check_mark: [bold green]{ip}[/bold green]")
+
+
+@app.command()
+def bd(ip_file: Annotated[str, typer.Argument()]):
+    full_path = os.path.abspath(ip_file)
+    parent_dir = os.path.dirname(full_path)
+
+    # Validation: Check if it's a xlsx file
+    if not full_path.endswith(".xlsx"):
+        err_console.print("The file is not an excel.")
+        raise typer.Exit(code=1)
+
+    ip = os.path.splitext(os.path.basename(full_path))[0]
+
+    # Create output directory
+    output_dir = os.path.join(parent_dir, ip)
+    Path(output_dir).mkdir(0o775, True, True)
+    output_file = os.path.join(output_dir, f"{ip}.txt")
+
+    content = utils.get_bd_names(full_path, ip)
     with open(output_file, "w") as file:
         file.write(content)
 
