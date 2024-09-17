@@ -134,8 +134,9 @@ def get_programs(programs_path: str):
 
     # Get the first occurrence of ProviderName with a value of 'msu'
     # Store its index one row above and only stores values until that index
-    rm_index = csv_data[csv_data.ProviderName == "msu"].index[0] - 1
-    csv_data = csv_data[:rm_index]
+    if "msu" in csv_data["ProviderName"].unique():
+        rm_index = csv_data[csv_data.ProviderName == "msu"].index[0] - 1
+        csv_data = csv_data[:rm_index]
 
     # Create a string with all the programs data
     def align_text_left(text):
