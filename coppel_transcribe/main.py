@@ -116,27 +116,35 @@ def linux(ip_file: Annotated[str, typer.Argument()]):
 
 
 @app.command()
-def bd(ip_file: Annotated[str, typer.Argument()]):
+def bd(
+    ip_file: Annotated[str, typer.Argument()],
+    show: Annotated[bool, typer.Option()] = True,
+):
     full_path = os.path.abspath(ip_file)
-    parent_dir = os.path.dirname(full_path)
+
+    ip = os.path.splitext(os.path.basename(full_path))[0]
 
     # Validation: Check if it's a xlsx file
     if not full_path.endswith(".xlsx"):
         err_console.print("The file is not an excel.")
         raise typer.Exit(code=1)
 
-    ip = os.path.splitext(os.path.basename(full_path))[0]
-
-    # Create output directory
-    output_dir = os.path.join(parent_dir, ip)
-    Path(output_dir).mkdir(0o775, True, True)
-    output_file = os.path.join(output_dir, f"{ip}.txt")
-
-    content = utils.get_bd_names(full_path, ip)
-    with open(output_file, "w") as file:
-        file.write(content)
+    # Validation: Check if the zip file exists
+    if not os.path.exists(full_path):
+        # err_console.print(f"The file '{full_path}' does not exist.")
+        err_console.print(
+            f":cross_mark: [bold red]{ip:<13}[/bold red] [italic](The file does not exists)[/italic]"
+        )
+        if not show:
+            return ""
+        return
 
     print(f":white_check_mark: [bold green]{ip}[/bold green]")
+
+    if show:
+        print(utils.get_bd_names(full_path, ip))
+    else:
+        return utils.get_bd_names(full_path, ip)
 
 
 @multiple_app.command("windows")
@@ -167,6 +175,27 @@ def multiple_linux(
 
     for ip in ips:
         linux(os.path.join(full_path, f"{ip}.txt"))
+
+
+@multiple_app.command("bd")
+def multiple_bd(
+    base_dir: Annotated[str, typer.Argument()],
+    ips: Annotated[List[str], typer.Argument()],
+):
+    full_path = os.path.abspath(base_dir)
+    # parent_dir = os.path.dirname(full_path)
+
+    if not os.path.isdir(full_path):
+        err_console.print("The chosen path is not a directory")
+        raise typer.Exit(code=1)
+
+    content = ""
+    for ip in ips:
+        content += bd(os.path.join(full_path, f"{ip}.xlsx"), show=False)
+
+    output_file = os.path.join(full_path, "bds.txt")
+    with open(output_file, "w") as file:
+        file.write(content)
 
 
 if __name__ == "__main__":
