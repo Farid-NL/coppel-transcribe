@@ -88,7 +88,7 @@ def linux(ip_file: Annotated[str, typer.Argument()]):
     # Validation: Check if file exists
     if not os.path.exists(full_path):
         err_console.print(
-            f":cross_mark: [bold red]{ip}[/bold red]\t[italic](The file does not exists)[/italic]"
+            f":cross_mark: [bold red]{ip:<13}[/bold red] [italic](The file does not exists)[/italic]"
         )
         return
 
