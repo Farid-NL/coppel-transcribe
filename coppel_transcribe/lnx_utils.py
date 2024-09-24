@@ -79,7 +79,7 @@ def get_info_format_1(file: str, ip: str) -> str:
 
         if "Version de Java" in data[i]:
             while "___" not in data[i]:
-                software_ver = re.search(r"(?:\d+\.)+\d+_?\d+", data[i])
+                software_ver = re.search(r"(?:\d+\.)+\d+(?:_?\d+)?", data[i])
                 if software_ver:
                     software["Java"] = software_ver.group()
                     break
