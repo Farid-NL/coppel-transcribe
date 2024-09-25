@@ -18,8 +18,35 @@ app.add_typer(multiple_app, name="multiple")
 
 err_console = Console(stderr=True)
 
+@app.command()
+def authors(
+    matriz_csv: Annotated[str, typer.Argument()],
+    ips: Annotated[List[str], typer.Argument()],
+):
+    full_path = os.path.abspath(matriz_csv)
+    parent_dir = os.path.dirname(full_path)
 
-# TODO: Add 'Etapa' argument to command
+    # Validation: Check if file exists
+    if not os.path.exists(full_path):
+        err_console.print(
+            f":cross_mark: [bold red]The file {full_path} does not exists[/bold red]"
+        )
+        return
+
+    # Validation: Check if it's a csv file
+    if not full_path.endswith(".csv"):
+        err_console.print(
+            f":cross_mark: [bold red]The file is not a csv file[/bold red]"
+        )
+        raise typer.Exit(code=1)
+
+    content = utils.get_bd_authors_from_matrix(full_path, ips)
+
+    output_file = os.path.join(parent_dir, "bds_authors.txt")
+    with open(output_file, "w") as file:
+        file.write(content)
+
+
 @app.command()
 def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
