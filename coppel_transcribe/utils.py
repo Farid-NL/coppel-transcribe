@@ -26,13 +26,13 @@ def get_bd_names(bds_path: str, ip: str):
 
 
 def get_bd_authors_from_matrix(csv_path: str, ips: list):
-    with open(csv_path, 'r') as file:
+    with open(csv_path, "r") as file:
         lines = file.readlines()
 
-    while "SO (Windows / Linux)" not  in lines[0]:
+    while "SO (Windows / Linux)" not in lines[0]:
         lines.pop(0)
 
-    with open(csv_path, 'w') as file:
+    with open(csv_path, "w") as file:
         file.writelines(lines)
 
     data_frame = pandas.read_csv(csv_path, usecols=["IP nueva", "Responsable Docto"])
@@ -43,7 +43,7 @@ def get_bd_authors_from_matrix(csv_path: str, ips: list):
         "Cesar Augusto Machorro Perea",
         "Mareli Natali Rojas Castillo",
         "Carlos Farid Nogales Lopez",
-        "Jose Ramon Huerta Coronado"
+        "Jose Ramon Huerta Coronado",
     ]
     r_counter = 0
     for ip in ips:
@@ -52,7 +52,6 @@ def get_bd_authors_from_matrix(csv_path: str, ips: list):
 
         result = data_frame[data_frame["IP nueva"] == ip]
         if not result.empty:
-
             if "Laura Fernández" in f"{result.iloc[0]['Responsable Docto']}":
                 content += f"{ip:<13}: Cesar Augusto Machorro Perea"
             elif "Fernando Armas Tellez" in f"{result.iloc[0]['Responsable Docto']}":
@@ -76,12 +75,12 @@ def get_bd_authors_from_matrix(csv_path: str, ips: list):
 def is_port_apps_empty(excel_file: str):
     full_path = os.path.abspath(excel_file)
 
-    data_frame = pandas.read_excel(full_path, sheet_name='Puerto por Aplicaciones')
+    data_frame = pandas.read_excel(full_path, sheet_name="Puerto por Aplicaciones")
 
     data_frame.columns = data_frame.iloc[9]
     data_frame.drop(data_frame.index[:10], inplace=True)
 
-    if data_frame['Aplicación que viven en el servidor '].isnull().values.any():
+    if data_frame["Aplicación que viven en el servidor "].isnull().values.any():
         return True
     else:
         return False

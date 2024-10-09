@@ -18,6 +18,7 @@ app.add_typer(multiple_app, name="multiple")
 
 err_console = Console(stderr=True)
 
+
 @app.command()
 def authors(
     matriz_csv: Annotated[str, typer.Argument()],
@@ -36,7 +37,7 @@ def authors(
     # Validation: Check if it's a csv file
     if not full_path.endswith(".csv"):
         err_console.print(
-            f":cross_mark: [bold red]The file is not a csv file[/bold red]"
+            ":cross_mark: [bold red]The file is not a csv file[/bold red]"
         )
         raise typer.Exit(code=1)
 
@@ -49,7 +50,9 @@ def authors(
 
 # TODO: Find better command name
 @app.command()
-def are_ports_apps(excels_dir: Annotated[str, typer.Argument()],):
+def are_ports_apps(
+    excels_dir: Annotated[str, typer.Argument()],
+):
     full_path = os.path.abspath(excels_dir)
 
     files = os.listdir(full_path)
@@ -61,10 +64,10 @@ def are_ports_apps(excels_dir: Annotated[str, typer.Argument()],):
         else:
             content += f"{ip:<13} - FALSE\n"
 
-
     output_file = os.path.join(full_path, "ports_apps.txt")
     with open(output_file, "w") as file:
         file.write(content)
+
 
 @app.command()
 def windows(ip_zip: Annotated[str, typer.Argument()]):
