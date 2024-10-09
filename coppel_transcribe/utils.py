@@ -71,3 +71,17 @@ def get_bd_authors_from_matrix(csv_path: str, ips: list):
         content += "\n"
 
     return content
+
+
+def is_port_apps_empty(excel_file: str):
+    full_path = os.path.abspath(excel_file)
+
+    data_frame = pandas.read_excel(full_path, sheet_name='Puerto por Aplicaciones')
+
+    data_frame.columns = data_frame.iloc[9]
+    data_frame.drop(data_frame.index[:10], inplace=True)
+
+    if data_frame['Aplicación que viven en el servidor '].isnull().values.any():
+        return True
+    else:
+        return False

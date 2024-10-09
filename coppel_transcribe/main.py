@@ -47,6 +47,25 @@ def authors(
         file.write(content)
 
 
+# TODO: Find better command name
+@app.command()
+def are_ports_apps(excels_dir: Annotated[str, typer.Argument()],):
+    full_path = os.path.abspath(excels_dir)
+
+    files = os.listdir(full_path)
+    content = ""
+    for file in files:
+        ip = re.search(r"\d+\.\d+\.\d+\.\d+", file).group(0)
+        if utils.is_port_apps_empty(os.path.join(full_path, file)):
+            content += f"{ip:<13} - TRUE\n"
+        else:
+            content += f"{ip:<13} - FALSE\n"
+
+
+    output_file = os.path.join(full_path, "ports_apps.txt")
+    with open(output_file, "w") as file:
+        file.write(content)
+
 @app.command()
 def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
