@@ -1,7 +1,12 @@
 import os
+import re
 from pathlib import Path
 
 import pandas
+
+POSTGRESQL_PORTS = [5432]
+MYSQ_PORTS = [3306]
+APPNAME_WITH_PORTS = ["java", "python"]
 
 
 def get_bd_names(bds_path: str, ip: str):
@@ -84,3 +89,89 @@ def is_port_apps_empty(excel_file: str):
         return True
     else:
         return False
+
+
+def revision_listos_8(excel_file: str):
+    def adjust_df(dataframe, header_row: int, content_row: int):
+        dataframe.columns = dataframe.iloc[header_row]  # Use row 9 as column headers
+        dataframe.drop(
+            dataframe.index[:content_row],  # Use only the data from row 10 onwards.
+            inplace=True,
+        )
+
+    full_path = os.path.abspath(excel_file)
+
+    so_checkbox = False
+    ready_checkbox = False
+
+    df_resumen = pandas.read_excel(full_path, sheet_name="Resumen")
+    df_puertos = pandas.read_excel(full_path, sheet_name="Puerto por Aplicaciones")
+    df_bds = pandas.read_excel(full_path, sheet_name="BD ")
+
+    # S.O check box (docs/revision-total-version-listos.md)
+    so = df_resumen.iloc[8, 2]
+    so_version = float(re.search(r"\d+(?:\.?\d+)?", so).group(0))
+    if 8 <= so_version < 9:
+        so_checkbox = True
+        print(f"SO Check\nVersión: {so_version} - ✅")
+    else:
+        print(f"SO Check\nVersión: {so_version} - ❌")
+
+    # Migration check box (docs/revision-total-version-listos.md)
+    allowed = [
+        "nessus-agen",
+        "haproxy",
+        "rte-sensor",
+        "sshd",
+    ]
+
+    forbidden = [
+        "xinetd",
+        "httpd",
+    ]
+
+    print("\nMigración Check")
+
+    # Condition 1
+    if not so_checkbox:
+        print(f"SO versión: {so_version} - ❌")
+        return so_checkbox, ready_checkbox
+
+    # Condition 2 - Forbidden
+    adjust_df(df_puertos, header_row=9, content_row=10)
+    if (
+        True
+        in df_puertos["Aplicación que viven en el servidor "].isin(forbidden).values
+    ):
+        print(f"Puerto por Aplicaciones (Web): {forbidden} - ❌")
+        return so_checkbox, ready_checkbox
+
+    # Condition 3 - Worksheet 'BD'
+    adjust_df(df_bds, header_row=8, content_row=9)
+    if df_bds["Base de datos"].values.any():
+        print("Hoja BD: No está vacía - ❌")
+        return so_checkbox, ready_checkbox
+
+    # Condition 3 - Ports associated with some DBMS
+    if (
+        df_puertos["Puerto"].isin(POSTGRESQL_PORTS).any()
+        or df_puertos["Puerto"].isin(MYSQ_PORTS).any()
+    ):
+        print("Puerto por Aplicaciones (BD): ❌")
+        return so_checkbox, ready_checkbox
+
+    # Condition 3 - Ports associated with some application
+    if (
+        df_puertos["Aplicación que viven en el servidor "]
+        .isin(APPNAME_WITH_PORTS)
+        .any()
+    ):
+        print(f"Puerto por Aplicaciones: {APPNAME_WITH_PORTS} - ❌")
+        return so_checkbox, ready_checkbox
+
+    # Condition 2 - Allowed
+    if True in df_puertos["Aplicación que viven en el servidor "].isin(allowed).values:
+        ready_checkbox = True
+
+    print("Todo bien: ✅")
+    return so_checkbox, ready_checkbox

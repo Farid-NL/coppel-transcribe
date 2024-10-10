@@ -70,6 +70,14 @@ def are_ports_apps(
 
 
 @app.command()
+def get_revision_listos(
+    excels_dir: Annotated[str, typer.Argument()],
+):
+    full_path = os.path.abspath(excels_dir)
+    print(f"\n{utils.revision_listos_8(full_path)}")
+
+
+@app.command()
 def windows(ip_zip: Annotated[str, typer.Argument()]):
     full_path = os.path.abspath(ip_zip)
 
